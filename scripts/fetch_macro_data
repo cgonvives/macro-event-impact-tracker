@@ -1,0 +1,210 @@
+#!/usr/bin/env python3
+"""
+Fetch macro economic data from FRED API
+Pulls CPI, NFP, unemployment, and other key indicators
+"""
+
+import logging
+import pandas as pd
+from datetime import datetime, timedelta
+from pathlib import Path
+import sys
+import traceback
+
+# Add parent directory to path
+sys.path.insert(0, str(Path(__file__).parent.parent))
+
+import fredapi
+from config import FRED_API_KEY, DATA_DIR, LOG_FILE, FRED_INDICATORS
+
+# ============================================================================
+# LOGGING SETUP
+# ============================================================================
+
+logging.basicConfig(
+    level=logging.INFO,
+    format='%(asctime)s - %(name)s - %(levelname)s - %(message)s',
+    handlers=[
+        logging.FileHandler(LOG_FILE),
+        logging.StreamHandler()
+    ]
+)
+logger = logging.getLogger(__name__)
+
+# ============================================================================
+# FRED DATA FETCHER
+# ============================================================================
+
+class FREDDataFetcher:
+    """Fetch economic data from Federal Reserve Economic Data (FRED)"""
+    
+    def __init__(self, api_key):
+        """Initialize FRED API client"""
+        if not api_key or api_key == 'demo':
+            raise ValueError("FRED API key not configured. Get one from: https://fred.stlouisfed.org/docs/api/api-key.html")
+        
+        self.fred = fredapi.Fred(api_key=api_key)
+        logger.info("✅ FRED API client initialized")
+    
+    def fetch_indicator(self, series_code, lookback_days=365):
+        """
+        Fetch a single indicator from FRED
+        
+        Args:
+            series_code: FRED series code (e.g., 'CPIAUCSL' for CPI)
+            lookback_days: How much historical data to fetch
+        
+        Returns:
+            pandas Series with data
+        """
+        try:
+            # Calculate date range
+            end_date = datetime.now()
+            start_date = end_date - timedelta(days=lookback_days)
+            
+            logger.info(f"Fetching {series_code} from FRED...")
+            
+            # Fetch data
+            data = self.fred.get_series(
+                series_code,
+                observation_start=start_date.strftime('%Y-%m-%d'),
+                observation_end=end_date.strftime('%Y-%m-%d')
+            )
+            
+            logger.info(f"✅ Successfully fetched {series_code}: {len(data)} observations")
+            return data
+            
+        except Exception as e:
+            logger.error(f"❌ Error fetching {series_code}: {str(e)}")
+            return None
+    
+    def fetch_multiple_indicators(self, series_codes, lookback_days=365):
+        """
+        Fetch multiple indicators and return as DataFrame
+        
+        Args:
+            series_codes: List of FRED series codes
+            lookback_days: How much historical data to fetch
+        
+        Returns:
+            pandas DataFrame with all indicators
+        """
+        logger.info(f"\n📊 Fetching {len(series_codes)} indicators from FRED...")
+        
+        all_data = {}
+        
+        for code in series_codes:
+            try:
+                data = self.fetch_indicator(code, lookback_days)
+                if data is not None:
+                    all_data[code] = data
+            except Exception as e:
+                logger.error(f"Error with {code}: {str(e)}")
+                continue
+        
+        if not all_data:
+            logger.error("No data fetched!")
+            return None
+        
+        # Combine into DataFrame
+        df = pd.DataFrame(all_data)
+        logger.info(f"\n✅ Successfully fetched {len(df.columns)} indicators")
+        logger.info(f"   Date range: {df.index} to {df.index[-1]}")
+        
+        return df
+    
+    def get_latest_values(self, series_codes):
+        """
+        Get ONLY the latest values for indicators
+        Useful for event detection (did new data just come out?)
+        
+        Args:
+            series_codes: List of FRED series codes
+        
+        Returns:
+            pandas DataFrame with latest values
+        """
+        logger.info(f"\n🔍 Checking for latest values of {len(series_codes)} indicators...")
+        
+        latest_data = {}
+        
+        for code in series_codes:
+            try:
+                data = self.fetch_indicator(code, lookback_days=365)
+                if data is not None and len(data) > 0:
+                    # Get latest value
+                    latest_date = data.index[-1]
+                    latest_value = data.iloc[-1]
+                    latest_data[code] = {
+                        'date': latest_date,
+                        'value': latest_value
+                    }
+                    logger.info(f"   {code}: {latest_value:.2f} (as of {latest_date.date()})")
+            except Exception as e:
+                logger.error(f"Error with {code}: {str(e)}")
+                continue
+        
+        if latest_data:
+            df = pd.DataFrame(latest_data).T
+            return df
+        else:
+            return None
+
+# ============================================================================
+# MAIN EXECUTION
+# ============================================================================
+
+def main():
+    """Main execution function"""
+    
+    print("\n" + "="*70)
+    print("FRED API DATA FETCHER")
+    print("="*70)
+    
+    try:
+        # Initialize FRED fetcher
+        fetcher = FREDDataFetcher(FRED_API_KEY)
+        
+        # Define which indicators to fetch
+        series_to_fetch = list(FRED_INDICATORS.keys())[:5]  # Start with first 5 for testing
+        
+        logger.info(f"\nIndicators to fetch: {series_to_fetch}")
+        
+        # Fetch data
+        df = fetcher.fetch_multiple_indicators(series_to_fetch, lookback_days=365)
+        
+        if df is not None:
+            # Save to CSV
+            output_file = DATA_DIR / 'raw' / 'fred_data.csv'
+            df.to_csv(output_file)
+            logger.info(f"\n✅ Data saved to: {output_file}")
+            
+            # Print sample
+            print("\n" + "-"*70)
+            print("SAMPLE DATA (Last 5 rows):")
+            print("-"*70)
+            print(df.tail())
+            print("-"*70)
+            
+            # Get latest values
+            latest_df = fetcher.get_latest_values(series_to_fetch)
+            if latest_df is not None:
+                print("\n" + "-"*70)
+                print("LATEST VALUES:")
+                print("-"*70)
+                print(latest_df)
+                print("-"*70)
+        
+        print("\n" + "="*70)
+        print("✅ FRED DATA FETCH COMPLETE")
+        print("="*70 + "\n")
+        
+        return 0
+        
+    except Exception as e:
+        logger.error(f"Fatal error: {str(e)}")
+        traceback.print_exc()
+        return 1
+
+if __name__ == '__main__':
+    sys.exit(main())

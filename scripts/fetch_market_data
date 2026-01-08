@@ -1,0 +1,205 @@
+#!/usr/bin/env python3
+"""
+Fetch market price data from yfinance
+Gets real-time and intraday data for stocks, FX, rates, and volatility
+"""
+
+import logging
+import pandas as pd
+from datetime import datetime, timedelta
+from pathlib import Path
+import sys
+
+# Add parent directory to path
+sys.path.insert(0, str(Path(__file__).parent.parent))
+
+import yfinance as yf
+from config import DATA_DIR, LOG_FILE, ASSETS
+
+# ============================================================================
+# LOGGING SETUP
+# ============================================================================
+
+logging.basicConfig(
+    level=logging.INFO,
+    format='%(asctime)s - %(name)s - %(levelname)s - %(message)s',
+    handlers=[
+        logging.FileHandler(LOG_FILE),
+        logging.StreamHandler()
+    ]
+)
+logger = logging.getLogger(__name__)
+
+# ============================================================================
+# MARKET DATA FETCHER
+# ============================================================================
+
+class MarketDataFetcher:
+    """Fetch market price data from yfinance"""
+    
+    def __init__(self):
+        """Initialize market data fetcher"""
+        logger.info("✅ Market data fetcher initialized (yfinance)")
+    
+    def fetch_ticker_data(self, ticker, start_date, end_date, interval='1d'):
+        """
+        Fetch OHLCV data for a single ticker
+        
+        Args:
+            ticker: Ticker symbol (e.g., 'SPY', 'EURUSD=X')
+            start_date: Start date string (YYYY-MM-DD)
+            end_date: End date string (YYYY-MM-DD)
+            interval: '1d' (daily), '1h' (hourly), '5m' (5-minute), '1m' (1-minute)
+        
+        Returns:
+            pandas DataFrame with OHLCV data
+        """
+        try:
+            logger.info(f"Fetching {ticker} data ({interval})...")
+            
+            data = yf.download(
+                ticker,
+                start=start_date,
+                end=end_date,
+                interval=interval,
+                progress=False  # Don't show progress bar
+            )
+            
+            if data is None or len(data) == 0:
+                logger.warning(f"⚠️  No data returned for {ticker}")
+                return None
+            
+            logger.info(f"✅ Successfully fetched {ticker}: {len(data)} candles")
+            return data
+            
+        except Exception as e:
+            logger.error(f"❌ Error fetching {ticker}: {str(e)}")
+            return None
+    
+    def fetch_multiple_tickers(self, tickers, start_date, end_date, interval='1d'):
+        """
+        Fetch data for multiple tickers at once
+        
+        Args:
+            tickers: List of ticker symbols
+            start_date: Start date string
+            end_date: End date string
+            interval: Time interval
+        
+        Returns:
+            Dictionary with ticker data
+        """
+        logger.info(f"\n📊 Fetching price data for {len(tickers)} assets...")
+        
+        all_data = {}
+        
+        for ticker in tickers:
+            data = self.fetch_ticker_data(ticker, start_date, end_date, interval)
+            if data is not None:
+                all_data[ticker] = data
+        
+        logger.info(f"✅ Successfully fetched {len(all_data)} assets")
+        return all_data
+    
+    def fetch_by_asset_class(self, asset_classes, lookback_days=30, interval='1d'):
+        """
+        Fetch data by asset class (equities, FX, rates, volatility)
+        
+        Args:
+            asset_classes: Dictionary of asset classes and tickers (from config)
+            lookback_days: How much historical data to fetch
+            interval: Time interval ('1d', '1h', '5m', '1m')
+        
+        Returns:
+            Dictionary organized by asset class
+        """
+        end_date = datetime.now()
+        start_date = end_date - timedelta(days=lookback_days)
+        
+        logger.info(f"\n📈 Fetching market data by asset class...")
+        logger.info(f"   Period: {start_date.date()} to {end_date.date()}")
+        logger.info(f"   Interval: {interval}")
+        
+        results = {}
+        
+        for asset_class, tickers in asset_classes.items():
+            logger.info(f"\n   {asset_class.upper()}:")
+            results[asset_class] = {}
+            
+            for ticker in tickers:
+                data = self.fetch_ticker_data(
+                    ticker, 
+                    start_date.strftime('%Y-%m-%d'),
+                    end_date.strftime('%Y-%m-%d'),
+                    interval
+                )
+                
+                if data is not None:
+                    results[asset_class][ticker] = data
+        
+        return results
+
+# ============================================================================
+# HELPER FUNCTIONS
+# ============================================================================
+
+def save_market_data(data_dict, asset_class, subfolder='daily'):
+    """Save market data to CSV files"""
+    
+    output_dir = DATA_DIR / 'raw' / asset_class / subfolder
+    output_dir.mkdir(parents=True, exist_ok=True)
+    
+    for ticker, data in data_dict.items():
+        filename = output_dir / f"{ticker.replace('=', '_')}.csv"
+        data.to_csv(filename)
+        logger.info(f"   💾 Saved: {filename}")
+
+# ============================================================================
+# MAIN EXECUTION
+# ============================================================================
+
+def main():
+    """Main execution function"""
+    
+    print("\n" + "="*70)
+    print("MARKET DATA FETCHER (yfinance)")
+    print("="*70)
+    
+    try:
+        fetcher = MarketDataFetcher()
+        
+        # Fetch data by asset class
+        data_dict = fetcher.fetch_by_asset_class(
+            asset_classes=ASSETS,
+            lookback_days=30,
+            interval='1d'  # Daily data for testing
+        )
+        
+        # Save data to files
+        for asset_class, tickers_data in data_dict.items():
+            if tickers_data:
+                logger.info(f"\n💾 Saving {asset_class} data...")
+                save_market_data(tickers_data, asset_class)
+        
+        # Print sample data
+        print("\n" + "-"*70)
+        print("SAMPLE DATA (Last 5 rows of SPY):")
+        print("-"*70)
+        if 'equities' in data_dict and 'SPY' in data_dict['equities']:
+            print(data_dict['equities']['SPY'].tail())
+        print("-"*70)
+        
+        print("\n" + "="*70)
+        print("✅ MARKET DATA FETCH COMPLETE")
+        print("="*70 + "\n")
+        
+        return 0
+        
+    except Exception as e:
+        logger.error(f"Fatal error: {str(e)}")
+        import traceback
+        traceback.print_exc()
+        return 1
+
+if __name__ == '__main__':
+    sys.exit(main())

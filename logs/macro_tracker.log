@@ -1,0 +1,94 @@
+2026-01-08 11:42:57,066 - __main__ - INFO - ✅ FRED API client initialized
+2026-01-08 11:42:57,066 - __main__ - INFO - 
+Indicators to fetch: ['CPIAUCSL', 'PAYEMS', 'UNRATE', 'UMCSENT', 'INDPRO']
+2026-01-08 11:42:57,066 - __main__ - INFO - 
+📊 Fetching 5 indicators from FRED...
+2026-01-08 11:42:57,066 - __main__ - INFO - Fetching CPIAUCSL from FRED...
+2026-01-08 11:42:57,388 - __main__ - INFO - ✅ Successfully fetched CPIAUCSL: 11 observations
+2026-01-08 11:42:57,388 - __main__ - INFO - Fetching PAYEMS from FRED...
+2026-01-08 11:42:57,728 - __main__ - INFO - ✅ Successfully fetched PAYEMS: 11 observations
+2026-01-08 11:42:57,729 - __main__ - INFO - Fetching UNRATE from FRED...
+2026-01-08 11:42:58,027 - __main__ - INFO - ✅ Successfully fetched UNRATE: 11 observations
+2026-01-08 11:42:58,027 - __main__ - INFO - Fetching UMCSENT from FRED...
+2026-01-08 11:42:58,243 - __main__ - INFO - ✅ Successfully fetched UMCSENT: 11 observations
+2026-01-08 11:42:58,243 - __main__ - INFO - Fetching INDPRO from FRED...
+2026-01-08 11:42:58,484 - __main__ - INFO - ✅ Successfully fetched INDPRO: 11 observations
+2026-01-08 11:42:58,486 - __main__ - INFO - 
+✅ Successfully fetched 5 indicators
+2026-01-08 11:42:58,492 - __main__ - INFO -    Date range: DatetimeIndex(['2025-01-01', '2025-02-01', '2025-03-01', '2025-04-01',
+               '2025-05-01', '2025-06-01', '2025-07-01', '2025-08-01',
+               '2025-09-01', '2025-10-01', '2025-11-01'],
+              dtype='datetime64[ns]', freq=None) to 2025-11-01 00:00:00
+2026-01-08 11:42:58,496 - __main__ - INFO - 
+✅ Data saved to: /home/carlosgonzalezv/Personal/quantFinance/MacroTracker/data/raw/fred_data.csv
+2026-01-08 11:42:58,508 - __main__ - INFO - 
+🔍 Checking for latest values of 5 indicators...
+2026-01-08 11:42:58,508 - __main__ - INFO - Fetching CPIAUCSL from FRED...
+2026-01-08 11:42:58,729 - __main__ - INFO - ✅ Successfully fetched CPIAUCSL: 11 observations
+2026-01-08 11:42:58,730 - __main__ - INFO -    CPIAUCSL: 325.03 (as of 2025-11-01)
+2026-01-08 11:42:58,730 - __main__ - INFO - Fetching PAYEMS from FRED...
+2026-01-08 11:42:58,971 - __main__ - INFO - ✅ Successfully fetched PAYEMS: 11 observations
+2026-01-08 11:42:58,972 - __main__ - INFO -    PAYEMS: 159552.00 (as of 2025-11-01)
+2026-01-08 11:42:58,972 - __main__ - INFO - Fetching UNRATE from FRED...
+2026-01-08 11:42:59,219 - __main__ - INFO - ✅ Successfully fetched UNRATE: 11 observations
+2026-01-08 11:42:59,220 - __main__ - INFO -    UNRATE: 4.60 (as of 2025-11-01)
+2026-01-08 11:42:59,220 - __main__ - INFO - Fetching UMCSENT from FRED...
+2026-01-08 11:42:59,443 - __main__ - INFO - ✅ Successfully fetched UMCSENT: 11 observations
+2026-01-08 11:42:59,444 - __main__ - INFO -    UMCSENT: 51.00 (as of 2025-11-01)
+2026-01-08 11:42:59,444 - __main__ - INFO - Fetching INDPRO from FRED...
+2026-01-08 11:42:59,689 - __main__ - INFO - ✅ Successfully fetched INDPRO: 11 observations
+2026-01-08 11:42:59,689 - __main__ - INFO -    INDPRO: 101.79 (as of 2025-11-01)
+2026-01-08 11:45:42,664 - __main__ - INFO - ✅ Market data fetcher initialized (yfinance)
+2026-01-08 11:45:42,664 - __main__ - INFO - 
+📈 Fetching market data by asset class...
+2026-01-08 11:45:42,665 - __main__ - INFO -    Period: 2025-12-09 to 2026-01-08
+2026-01-08 11:45:42,665 - __main__ - INFO -    Interval: 1d
+2026-01-08 11:45:42,665 - __main__ - INFO - 
+   EQUITIES:
+2026-01-08 11:45:42,665 - __main__ - INFO - Fetching SPY data (1d)...
+2026-01-08 11:45:43,224 - __main__ - INFO - ✅ Successfully fetched SPY: 20 candles
+2026-01-08 11:45:43,224 - __main__ - INFO - Fetching QQQ data (1d)...
+2026-01-08 11:45:43,470 - __main__ - INFO - ✅ Successfully fetched QQQ: 20 candles
+2026-01-08 11:45:43,470 - __main__ - INFO - Fetching IWM data (1d)...
+2026-01-08 11:45:43,785 - __main__ - INFO - ✅ Successfully fetched IWM: 20 candles
+2026-01-08 11:45:43,785 - __main__ - INFO - Fetching DIA data (1d)...
+2026-01-08 11:45:44,199 - __main__ - INFO - ✅ Successfully fetched DIA: 20 candles
+2026-01-08 11:45:44,199 - __main__ - INFO - 
+   FX:
+2026-01-08 11:45:44,201 - __main__ - INFO - Fetching EURUSD=X data (1d)...
+2026-01-08 11:45:44,378 - __main__ - INFO - ✅ Successfully fetched EURUSD=X: 20 candles
+2026-01-08 11:45:44,378 - __main__ - INFO - Fetching GBPUSD=X data (1d)...
+2026-01-08 11:45:44,681 - __main__ - INFO - ✅ Successfully fetched GBPUSD=X: 20 candles
+2026-01-08 11:45:44,681 - __main__ - INFO - Fetching JPYUSD=X data (1d)...
+2026-01-08 11:45:44,935 - __main__ - INFO - ✅ Successfully fetched JPYUSD=X: 20 candles
+2026-01-08 11:45:44,936 - __main__ - INFO - 
+   RATES:
+2026-01-08 11:45:44,936 - __main__ - INFO - Fetching TNX data (1d)...
+2026-01-08 11:45:45,117 - yfinance - ERROR - $TNX: possibly delisted; no price data found  (1d 2025-12-09 -> 2026-01-08)
+2026-01-08 11:45:45,122 - yfinance - ERROR - 
+1 Failed download:
+2026-01-08 11:45:45,123 - yfinance - ERROR - ['TNX']: possibly delisted; no price data found  (1d 2025-12-09 -> 2026-01-08)
+2026-01-08 11:45:45,132 - __main__ - WARNING - ⚠️  No data returned for TNX
+2026-01-08 11:45:45,133 - __main__ - INFO - Fetching ^TNX data (1d)...
+2026-01-08 11:45:45,438 - __main__ - INFO - ✅ Successfully fetched ^TNX: 20 candles
+2026-01-08 11:45:45,438 - __main__ - INFO - 
+   VOLATILITY:
+2026-01-08 11:45:45,438 - __main__ - INFO - Fetching ^VIX data (1d)...
+2026-01-08 11:45:45,667 - __main__ - INFO - ✅ Successfully fetched ^VIX: 20 candles
+2026-01-08 11:45:45,668 - __main__ - INFO - 
+💾 Saving equities data...
+2026-01-08 11:45:45,671 - __main__ - INFO -    💾 Saved: /home/carlosgonzalezv/Personal/quantFinance/MacroTracker/data/raw/equities/daily/SPY.csv
+2026-01-08 11:45:45,672 - __main__ - INFO -    💾 Saved: /home/carlosgonzalezv/Personal/quantFinance/MacroTracker/data/raw/equities/daily/QQQ.csv
+2026-01-08 11:45:45,673 - __main__ - INFO -    💾 Saved: /home/carlosgonzalezv/Personal/quantFinance/MacroTracker/data/raw/equities/daily/IWM.csv
+2026-01-08 11:45:45,676 - __main__ - INFO -    💾 Saved: /home/carlosgonzalezv/Personal/quantFinance/MacroTracker/data/raw/equities/daily/DIA.csv
+2026-01-08 11:45:45,676 - __main__ - INFO - 
+💾 Saving fx data...
+2026-01-08 11:45:45,679 - __main__ - INFO -    💾 Saved: /home/carlosgonzalezv/Personal/quantFinance/MacroTracker/data/raw/fx/daily/EURUSD_X.csv
+2026-01-08 11:45:45,681 - __main__ - INFO -    💾 Saved: /home/carlosgonzalezv/Personal/quantFinance/MacroTracker/data/raw/fx/daily/GBPUSD_X.csv
+2026-01-08 11:45:45,683 - __main__ - INFO -    💾 Saved: /home/carlosgonzalezv/Personal/quantFinance/MacroTracker/data/raw/fx/daily/JPYUSD_X.csv
+2026-01-08 11:45:45,683 - __main__ - INFO - 
+💾 Saving rates data...
+2026-01-08 11:45:45,686 - __main__ - INFO -    💾 Saved: /home/carlosgonzalezv/Personal/quantFinance/MacroTracker/data/raw/rates/daily/^TNX.csv
+2026-01-08 11:45:45,686 - __main__ - INFO - 
+💾 Saving volatility data...
+2026-01-08 11:45:45,691 - __main__ - INFO -    💾 Saved: /home/carlosgonzalezv/Personal/quantFinance/MacroTracker/data/raw/volatility/daily/^VIX.csv
