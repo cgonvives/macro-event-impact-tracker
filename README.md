@@ -19,14 +19,17 @@ Setup & Auth    Data Ingestion   Event Detection   Market Impact    Dashboard &
 ## PHASE 1: Project Setup & API Authentication
 
 ### Task 1.1: Environment Setup and Dependencies
+
 **What to do:**
+
 - Create a Python virtual environment
 - Install core packages: `pandas`, `numpy`, `requests`, `matplotlib`, `seaborn`, `yfinance`, `pandas-datareader`
-- Install API client libraries: `tradingeconomics` (for macro events)
-- Setup `.env` file for API keys (Trading Economics, optional: FRED for historical data)
+- Install API client libraries: `fredapi` (for macro events)
+- Setup `.env` file for API keys
 - Create project directory structure with subdirectories: `data/`, `scripts/`, `output/`, `config/`
 
 **Achievements:**
+
 - ✅ Development environment ready and isolated
 - ✅ All dependencies documented in `requirements.txt`
 - ✅ Secure API key management via environment variables (no hardcoding)
@@ -36,25 +39,19 @@ Setup & Auth    Data Ingestion   Event Detection   Market Impact    Dashboard &
 ---
 
 ### Task 1.2: Trading Economics API Authentication
+
 **What to do:**
-- Register for Trading Economics API account (free tier available: https://tradingeconomics.com/member/register)
+
+- Register for Fred API account
 - Obtain API key and secret
 - Test API connectivity with a simple call to retrieve one macro indicator (e.g., USD CPI)
 - Create a `config.py` file to centralize API credentials and parameters
 
 **Achievements:**
+
 - ✅ Verified API access working
 - ✅ Can pull real macro data successfully
 - ✅ Configuration management in place for easy API adjustments
-
-**Code snippet to test:**
-```python
-import tradingeconomics as te
-
-te.login('your_api_key:your_secret')
-data = te.getIndicatorData(country='united states')  # Test call
-print(data.head())
-```
 
 **Deliverable:** Confirmed API access and working `config.py`
 
@@ -63,7 +60,9 @@ print(data.head())
 ## PHASE 2: Macro Event Data Ingestion Pipeline
 
 ### Task 2.1: Define Key Macro Indicators and Their Calendar
+
 **What to do:**
+
 - Identify the **top macro events** that move markets most (create a priority list):
   - **High Impact:** NFP (Non-Farm Payroll), CPI (Consumer Price Index), PCE, Federal Reserve Rate Decision
   - **Medium Impact:** PMI (Manufacturing & Services), ISM, Unemployment Rate, Retail Sales, Housing Starts
@@ -72,6 +71,7 @@ print(data.head())
 - Build a **macro calendar mapping** in a CSV or JSON file with: Event Name, Typical Release Time, Frequency, Impact Level, Countries
 
 **Achievements:**
+
 - ✅ Clear understanding of which macro events matter most
 - ✅ Calendar of expected releases created
 - ✅ Can prioritize which events to track
@@ -81,9 +81,11 @@ print(data.head())
 ---
 
 ### Task 2.2: Build Real-Time Macro Data Fetcher
+
 **What to do:**
+
 - Create a Python script `fetch_macro_data.py` that:
-  - Connects to Trading Economics API
+  - Connects to Fred API
   - Fetches the latest values for target indicators (CPI, NFP, PMI, etc.)
   - Extracts key information: event name, release date/time, actual value, forecast, previous value
   - Stores data in a structured format (pandas DataFrame or local database)
@@ -91,11 +93,13 @@ print(data.head())
 - Add logging to track what data was fetched and when
 
 **Achievements:**
+
 - ✅ Automated data collection from macro APIs
 - ✅ Structured storage of macro data with timestamps
 - ✅ Robust error handling and logging for debugging
 
 **Key data fields to capture:**
+
 ```
 - Event Name (CPI, NFP, PMI, etc.)
 - Release DateTime (UTC timestamp)
@@ -111,7 +115,9 @@ print(data.head())
 ---
 
 ### Task 2.3: Build Market Price Data Fetcher
+
 **What to do:**
+
 - Create a script `fetch_market_data.py` that pulls **near real-time** market data for 4 asset classes:
   1. **Equities:** SPY (S&P 500), QQQ (Nasdaq 100), IWM (Russell 2000) using `yfinance`
   2. **FX:** EUR/USD, GBP/USD, USD/JPY using `yfinance` or Trading Economics streaming data
@@ -121,11 +127,13 @@ print(data.head())
 - Store prices in a time-indexed DataFrame with proper timezone handling (all UTC)
 
 **Achievements:**
+
 - ✅ Access to 4 asset class price feeds simultaneously
 - ✅ Intraday granular data (minute-level) for event reaction capture
 - ✅ Unified time-series data structure
 
 **Example asset tickers to fetch:**
+
 ```python
 equities = ['SPY', 'QQQ', 'IWM']
 fx_pairs = ['EURUSD=X', 'GBPUSD=X', 'JPYUSD=X']
@@ -140,7 +148,9 @@ volatility = ['^VIX']
 ## PHASE 3: Event Detection and Data Alignment
 
 ### Task 3.1: Event Trigger Detection System
+
 **What to do:**
+
 - Create `event_detector.py` that:
   - Continuously monitors for new macro releases from the macro data feed
   - Detects when a "surprise" occurs (magnitude of Actual vs Forecast > threshold)
@@ -150,6 +160,7 @@ volatility = ['^VIX']
 - Implement intelligent thresholds (e.g., only trigger if surprise > 0.5 standard deviations)
 
 **Achievements:**
+
 - ✅ Automatic detection of market-moving events
 - ✅ Prioritization of high-impact releases only
 - ✅ Clean event logs for later analysis
@@ -159,7 +170,9 @@ volatility = ['^VIX']
 ---
 
 ### Task 3.2: Time-Series Alignment Around Event
+
 **What to do:**
+
 - Create `align_event_data.py` that takes a detected macro event and:
   - Defines time windows around the event:
     - **Pre-event window:** -30 min to event release
@@ -172,11 +185,13 @@ volatility = ['^VIX']
   - Stores aligned data as a structured dataset keyed by event ID
 
 **Achievements:**
+
 - ✅ Clean, organized time-series data centered on event releases
 - ✅ Standardized format for cross-event comparisons
 - ✅ Basis for building impact analysis visualizations
 
 **Data structure example:**
+
 ```
 Event ID: NFP_2024_01_05
 Release Time (UTC): 2024-01-05 13:30:00
@@ -192,7 +207,9 @@ VIX: 15.2 → 15.8 → 17.3
 ---
 
 ### Task 3.3: Compute Event Impact Metrics
+
 **What to do:**
+
 - Create `compute_impact_metrics.py` that for each event calculates:
   - **Price moves (absolute):** Δ price from -30 min to +60 min
   - **Directional moves:** Positive or negative reaction
@@ -203,16 +220,18 @@ VIX: 15.2 → 15.8 → 17.3
 - Create a summary metric: "Impact Score" (aggregate effect across all 4 asset classes)
 
 **Achievements:**
+
 - ✅ Quantified understanding of market reactions
 - ✅ Comparable metrics across different events
 - ✅ Foundation for pattern analysis
 
 **Example metrics output:**
+
 ```
 NFP_2024_01_05:
   Surprise: +250k (expected 150k)
   SPY Return: +0.34% (60 min post-release)
-  EURUSD Change: -0.23% 
+  EURUSD Change: -0.23%
   TNX Change: +8 bps
   VIX Surge: +2.1 points
   Volatility Impact Score: 7.8/10
@@ -225,8 +244,11 @@ NFP_2024_01_05:
 ## PHASE 4: Market Impact Analysis & Pattern Discovery
 
 ### Task 4.1: Build Cross-Asset Reaction Dashboard (Interactive Visualization)
+
 **What to do:**
+
 - Create `visualize_event_impact.py` using `matplotlib` and `seaborn` that produces:
+
   1. **4-Panel Price Chart:** One row per asset class (Equities, FX, Rates, Vol) showing 2-hour window around release with:
      - Price line chart
      - Event release marked with vertical red line at T=0
@@ -239,11 +261,13 @@ NFP_2024_01_05:
 - Create a **summary dashboard** showing the top 5-10 events in a grid layout
 
 **Achievements:**
+
 - ✅ Clear visual communication of market reactions
 - ✅ Instantly see which assets reacted and how much
 - ✅ Professional-quality visualizations for portfolio/presentation
 
 **Chart structure example:**
+
 ```
 ┌─────────────────────────────────────────┐
 │ Event: CPI Release | Jan 5, 2024 @ 1:30 PM
@@ -264,8 +288,11 @@ NFP_2024_01_05:
 ---
 
 ### Task 4.2: Statistical Analysis of Macro-to-Market Linkages
+
 **What to do:**
+
 - Create `analyze_macro_linkages.py` that builds a **correlation matrix:**
+
   - X-axis: Different macro surprises (CPI surprise, NFP surprise, rate surprise magnitude)
   - Y-axis: Asset reactions (SPY return, EURUSD move, TNX change, VIX change)
   - Calculate Pearson correlation coefficients
@@ -278,11 +305,13 @@ NFP_2024_01_05:
   - Example: `SPY_60min_return = α + β * NFP_surprise + ε`
 
 **Achievements:**
+
 - ✅ Data-driven understanding of macro-to-market transmission
 - ✅ Quantified causal relationships (not just price patterns)
 - ✅ Shows you understand economic theory applied to markets
 
 **Example correlation output:**
+
 ```
                     CPI_Surprise  NFP_Surprise  RateDecision
 SPY_Return               0.32         0.58         0.22
@@ -296,8 +325,11 @@ VIX_Change               0.52         0.49         0.67
 ---
 
 ### Task 4.3: Identify Recurring Patterns and Edge Cases
+
 **What to do:**
+
 - Create `pattern_detection.py` that analyzes:
+
   1. **Direction Consistency:** Do certain macro events ALWAYS move certain assets in the same direction?
      - Example: Does CPI surprise ALWAYS move SPY and TNX in opposite directions?
   2. **Volatility Clustering:** Do certain events always trigger vol spikes? Which assets spike together?
@@ -308,6 +340,7 @@ VIX_Change               0.52         0.49         0.67
 - Document exceptions/edge cases where normal patterns broke (valuable for interviews!)
 
 **Achievements:**
+
 - ✅ Deep market insights ready to discuss with recruiters
 - ✅ Identifies potential trading strategies (without implementing trades)
 - ✅ Shows understanding of regime changes in markets
@@ -319,7 +352,9 @@ VIX_Change               0.52         0.49         0.67
 ## PHASE 5: Dashboard and Automation
 
 ### Task 5.1: Build Automated Report Generation
+
 **What to do:**
+
 - Create `generate_report.py` that:
   - Runs on a scheduled basis (daily or after each major event)
   - Collects all new events detected since last report
@@ -332,6 +367,7 @@ VIX_Change               0.52         0.49         0.67
 - Use `matplotlib` + `pypdf` or `reportlab` for PDF generation
 
 **Achievements:**
+
 - ✅ Fully automated workflow (show this works!)
 - ✅ Professional reporting (impressive for interviews)
 - ✅ Real business-like application
@@ -341,8 +377,11 @@ VIX_Change               0.52         0.49         0.67
 ---
 
 ### Task 5.2: Live Monitoring Dashboard (Web-Based)
+
 **What to do:**
+
 - Create a **web dashboard** using `Streamlit` or `Dash` (easier than full Flask app) that displays:
+
   1. **Real-Time Macro Calendar:** Upcoming releases for the next 7 days
   2. **Live Event Feed:** Shows newly detected events with immediate impact summary
   3. **Cross-Asset Impact Display:** Real-time 4-panel chart showing latest market reactions
@@ -352,6 +391,7 @@ VIX_Change               0.52         0.49         0.67
 - Make it interactive: users can click on past events to see detailed charts
 
 **Example using Streamlit:**
+
 ```python
 import streamlit as st
 
@@ -369,6 +409,7 @@ st.dataframe(historical_events, height=400)
 ```
 
 **Achievements:**
+
 - ✅ Professional visualization tool
 - ✅ Can run locally or deploy to cloud (e.g., Streamlit Cloud)
 - ✅ Impressive portfolio piece - shows full-stack capability
@@ -378,7 +419,9 @@ st.dataframe(historical_events, height=400)
 ---
 
 ### Task 5.3: Scheduling and Automation
+
 **What to do:**
+
 - Set up automated task scheduling using `APScheduler` or `schedule` library:
   - Every 30 minutes: check for new macro releases
   - Every 2 hours: update market data and check for reactions
@@ -388,11 +431,13 @@ st.dataframe(historical_events, height=400)
 - Log all runs to a `logs/` directory for debugging
 
 **Achievements:**
+
 - ✅ Truly "real-time" system (not manual)
 - ✅ Shows production engineering mindset
 - ✅ Can run unattended 24/5 (markets not open on weekends)
 
 **Example schedule setup:**
+
 ```python
 from apscheduler.schedulers.background import BackgroundScheduler
 
@@ -411,8 +456,11 @@ scheduler.start()
 ## PHASE 6: Deployment & Documentation (Bonus)
 
 ### Task 6.1: Code Organization and Documentation
+
 **What to do:**
+
 - Organize code into modular structure:
+
   ```
   macro_tracker/
   ├── config.py              # API keys, parameters
@@ -441,6 +489,7 @@ scheduler.start()
   - Architecture diagram
 
 **Achievements:**
+
 - ✅ Professional code quality
 - ✅ Easy for recruiters/collaborators to understand
 - ✅ Demonstrates software engineering best practices
@@ -450,7 +499,9 @@ scheduler.start()
 ---
 
 ### Task 6.2: GitHub and Portfolio Presentation
+
 **What to do:**
+
 - Push project to GitHub with:
   - Clear commit history (show your development process)
   - Comprehensive README with setup instructions
@@ -464,6 +515,7 @@ scheduler.start()
   - Results: Show sample event analyses and charts
 
 **Achievements:**
+
 - ✅ Impressive GitHub project for portfolio
 - ✅ Clear communication of what you built and why
 - ✅ Ready to discuss in interviews
@@ -477,18 +529,23 @@ scheduler.start()
 ### What You'll Be Able to Say in Interviews:
 
 1. **"I built an automated system that ingests real-time macro data and detects market-moving events"**
+
    - Shows: API integration, data engineering, automation
 
 2. **"I can show you that NFP surprises move equities 58% of the time in the same direction as consensus expectations"**
+
    - Shows: Statistical analysis, market intuition, data storytelling
 
 3. **"My system captured the FX impact of rate decisions within 60 minutes of release"**
+
    - Shows: Cross-asset understanding, timing/precision
 
 4. **"I automated the entire pipeline from data ingestion to report generation using APScheduler"**
+
    - Shows: Full-stack thinking, production readiness
 
 5. **"I discovered that volatility spikes are most pronounced in the 30 minutes immediately after NFP, then mean-revert within 4 hours"**
+
    - Shows: Pattern recognition, market timing insights
 
 6. **"The dashboard visualizes correlations between macro surprises and asset moves in real-time"**
@@ -498,15 +555,15 @@ scheduler.start()
 
 ## Timeline Estimate
 
-| Phase | Tasks | Estimated Time |
-|-------|-------|-----------------|
-| 1 | Setup & Auth | 2-3 hours |
-| 2 | Data Ingestion | 8-10 hours |
-| 3 | Event Detection & Alignment | 6-8 hours |
-| 4 | Analysis & Patterns | 8-10 hours |
-| 5 | Dashboard & Automation | 6-8 hours |
-| 6 | Deployment & Docs | 3-4 hours |
-| **TOTAL** | | **33-43 hours** |
+| Phase     | Tasks                       | Estimated Time  |
+| --------- | --------------------------- | --------------- |
+| 1         | Setup & Auth                | 2-3 hours       |
+| 2         | Data Ingestion              | 8-10 hours      |
+| 3         | Event Detection & Alignment | 6-8 hours       |
+| 4         | Analysis & Patterns         | 8-10 hours      |
+| 5         | Dashboard & Automation      | 6-8 hours       |
+| 6         | Deployment & Docs           | 3-4 hours       |
+| **TOTAL** |                             | **33-43 hours** |
 
 **Realistic pace:** 1-2 weeks part-time, 3-5 days full-time
 
@@ -515,11 +572,13 @@ scheduler.start()
 ## Resources & Learning Links
 
 ### APIs
+
 - **Trading Economics:** https://tradingeconomics.com/member/register (free tier available)
 - **FRED (Federal Reserve):** https://fred.stlouisfed.org/docs/api/ (free, no key needed for basic use)
 - **Yahoo Finance (yfinance):** https://finance.yahoo.com (free via yfinance library)
 
 ### Python Libraries
+
 - `yfinance` - stock/ETF/index data
 - `pandas-datareader` - FRED and other sources
 - `tradingeconomics` - macro data
@@ -528,6 +587,7 @@ scheduler.start()
 - `matplotlib`, `seaborn` - visualizations
 
 ### Concepts to Understand
+
 - Macro event calendars and impact classifications
 - Cross-asset correlations and contagion
 - Mean reversion in asset prices
@@ -539,6 +599,7 @@ scheduler.start()
 ## Final Advice for Recruiters
 
 Frame your project like this:
+
 > "I built a real-time macro event impact tracker that automatically detects major economic releases and measures their ripple effects across equities, currencies, interest rates, and volatility. The system revealed that NFP surprises drive 58% of near-term equity moves and that FX reacts most strongly to rate decisions. This taught me how macro shocks propagate through markets in real time."
 
 **This shows:** Full-stack engineering (data pipelines, APIs, automation), quantitative analysis (statistics, correlation), domain knowledge (macro, markets), and the ability to connect dots between different asset classes.

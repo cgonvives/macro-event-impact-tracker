@@ -1,0 +1,109 @@
+#!/usr/bin/env python3
+
+import pandas as pd
+from pathlib import Path
+
+# 1. Define your macro events universe
+MACRO_EVENTS = [
+    {
+        "event_id": "NFP",
+        "event_name": "Non-Farm Payrolls",
+        "fred_series_code": "PAYEMS",
+        "country": "US",
+        "impact_level": "HIGH",
+        "frequency": "monthly",
+        "typical_day": "First Friday",
+        "typical_time_et": "08:30",
+        "notes": "Employment Situation; huge risk event for FX, rates, equities.",
+    },
+    {
+        "event_id": "UNRATE",
+        "event_name": "Unemployment Rate",
+        "fred_series_code": "UNRATE",
+        "country": "US",
+        "impact_level": "HIGH",
+        "frequency": "monthly",
+        "typical_day": "First Friday",
+        "typical_time_et": "08:30",
+        "notes": "Released with NFP; labor market slack.",
+    },
+    {
+        "event_id": "CPI",
+        "event_name": "CPI Inflation",
+        "fred_series_code": "CPIAUCSL",
+        "country": "US",
+        "impact_level": "HIGH",
+        "frequency": "monthly",
+        "typical_day": "Around 10th",
+        "typical_time_et": "08:30",
+        "notes": "Headline inflation; shifts Fed expectations.",
+    },
+    {
+        "event_id": "CORE_CPI",
+        "event_name": "Core CPI (ex food & energy)",
+        "fred_series_code": "CPILFESL",
+        "country": "US",
+        "impact_level": "HIGH",
+        "frequency": "monthly",
+        "typical_day": "Around 10th",
+        "typical_time_et": "08:30",
+        "notes": "Less volatile; closely watched by markets.",
+    },
+    {
+        "event_id": "PCE",
+        "event_name": "PCE Price Index",
+        "fred_series_code": "PCEPI",
+        "country": "US",
+        "impact_level": "HIGH",
+        "frequency": "monthly",
+        "typical_day": "End of month",
+        "typical_time_et": "08:30",
+        "notes": "Fed’s preferred inflation gauge.",
+    },
+    {
+        "event_id": "RETAIL",
+        "event_name": "Advance Retail Sales",
+        "fred_series_code": "RSXFS",
+        "country": "US",
+        "impact_level": "MEDIUM",
+        "frequency": "monthly",
+        "typical_day": "Mid-month",
+        "typical_time_et": "08:30",
+        "notes": "Consumer spending strength.",
+    },
+    {
+        "event_id": "INDPRO",
+        "event_name": "Industrial Production",
+        "fred_series_code": "INDPRO",
+        "country": "US",
+        "impact_level": "MEDIUM",
+        "frequency": "monthly",
+        "typical_day": "Mid-month",
+        "typical_time_et": "09:15",
+        "notes": "Manufacturing/production activity.",
+    },
+    {
+        "event_id": "CLAIMS",
+        "event_name": "Initial Jobless Claims",
+        "fred_series_code": "ICSA",
+        "country": "US",
+        "impact_level": "MEDIUM",
+        "frequency": "weekly",
+        "typical_day": "Thursday",
+        "typical_time_et": "08:30",
+        "notes": "Weekly labor market proxy.",
+    },
+]
+
+def main():
+    project_root = Path(__file__).resolve().parent.parent
+    data_dir = project_root / "data"
+    data_dir.mkdir(exist_ok=True)
+    out_path = data_dir / "macro_calendar.csv"
+
+    df = pd.DataFrame(MACRO_EVENTS)
+    df.to_csv(out_path, index=False)
+    print(f"✅ macro_calendar.csv written to {out_path}")
+
+if __name__ == "__main__":
+    main()

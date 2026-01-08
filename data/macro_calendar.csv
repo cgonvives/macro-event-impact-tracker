@@ -1,0 +1,9 @@
+event_id,event_name,fred_series_code,country,impact_level,frequency,typical_day,typical_time_et,notes
+NFP,Non-Farm Payrolls,PAYEMS,US,HIGH,monthly,First Friday,08:30,"Employment Situation; huge risk event for FX, rates, equities."
+UNRATE,Unemployment Rate,UNRATE,US,HIGH,monthly,First Friday,08:30,Released with NFP; labor market slack.
+CPI,CPI Inflation,CPIAUCSL,US,HIGH,monthly,Around 10th,08:30,Headline inflation; shifts Fed expectations.
+CORE_CPI,Core CPI (ex food & energy),CPILFESL,US,HIGH,monthly,Around 10th,08:30,Less volatile; closely watched by markets.
+PCE,PCE Price Index,PCEPI,US,HIGH,monthly,End of month,08:30,Fed’s preferred inflation gauge.
+RETAIL,Advance Retail Sales,RSXFS,US,MEDIUM,monthly,Mid-month,08:30,Consumer spending strength.
+INDPRO,Industrial Production,INDPRO,US,MEDIUM,monthly,Mid-month,09:15,Manufacturing/production activity.
+CLAIMS,Initial Jobless Claims,ICSA,US,MEDIUM,weekly,Thursday,08:30,Weekly labor market proxy.
