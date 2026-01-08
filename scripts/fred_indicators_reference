@@ -1,0 +1,233 @@
+"""
+Reference guide for FRED Indicators
+Maps FRED series codes to human-readable names and metadata
+"""
+
+# FRED Indicator definitions
+# Format: 'SERIES_CODE': {'name': '...', 'frequency': '...', 'impact': '...', ...}
+
+FRED_INDICATORS_REFERENCE = {
+    # ========== EMPLOYMENT DATA (Very Important) ==========
+    'PAYEMS': {
+        'name': 'Non-Farm Payroll (Total Nonfarm Employment)',
+        'frequency': 'monthly',
+        'impact': 'VERY HIGH',
+        'release_schedule': 'First Friday of month, 8:30 AM ET',
+        'description': 'Total number of paid employees in the US',
+        'unit': 'thousands',
+        'market_importance': 'This is THE most important economic indicator. Markets can swing 2-3% on NFP surprises',
+        'source': 'Bureau of Labor Statistics'
+    },
+    'UNRATE': {
+        'name': 'Unemployment Rate',
+        'frequency': 'monthly',
+        'impact': 'HIGH',
+        'release_schedule': 'First Friday of month, 8:30 AM ET',
+        'description': 'Percentage of labor force that is unemployed',
+        'unit': 'percent',
+        'market_importance': 'Released same time as NFP, highly correlated',
+        'source': 'Bureau of Labor Statistics'
+    },
+    'ICSA': {
+        'name': 'Initial Claims (Jobless Claims)',
+        'frequency': 'weekly',
+        'impact': 'MEDIUM',
+        'release_schedule': 'Every Thursday, 8:30 AM ET',
+        'description': 'Weekly count of new unemployment insurance claims',
+        'unit': 'thousands',
+        'market_importance': 'Early indicator of labor market health',
+        'source': 'Department of Labor'
+    },
+    
+    # ========== INFLATION DATA (Very Important) ==========
+    'CPIAUCSL': {
+        'name': 'Consumer Price Index (CPI)',
+        'frequency': 'monthly',
+        'impact': 'VERY HIGH',
+        'release_schedule': 'Second week of month, 8:30 AM ET',
+        'description': 'Measure of inflation - how much prices rose',
+        'unit': 'index (1982-1984 = 100)',
+        'market_importance': 'Directly impacts Fed rate expectations. Big CPI misses can swing markets 2%+',
+        'source': 'Bureau of Labor Statistics'
+    },
+    'CPILFESL': {
+        'name': 'Core CPI (excluding food and energy)',
+        'frequency': 'monthly',
+        'impact': 'HIGH',
+        'release_schedule': 'Second week of month, 8:30 AM ET',
+        'description': 'CPI excluding volatile food and energy',
+        'unit': 'index (1982-1984 = 100)',
+        'market_importance': 'Fed focuses on core CPI for policy decisions',
+        'source': 'Bureau of Labor Statistics'
+    },
+    'PCEPI': {
+        'name': 'Personal Consumption Expenditures (PCE) Inflation',
+        'frequency': 'monthly',
+        'impact': 'VERY HIGH',
+        'release_schedule': 'End of month, 8:30 AM ET',
+        'description': 'Broader measure of inflation including services',
+        'unit': 'percent change',
+        'market_importance': 'Fed\'s preferred inflation measure for policy decisions',
+        'source': 'Bureau of Economic Analysis'
+    },
+    
+    # ========== ECONOMIC ACTIVITY ==========
+    'INDPRO': {
+        'name': 'Industrial Production',
+        'frequency': 'monthly',
+        'impact': 'MEDIUM',
+        'release_schedule': 'Mid-month, 9:15 AM ET',
+        'description': 'Output from manufacturing, mining, utilities',
+        'unit': 'index',
+        'market_importance': 'Shows manufacturing health and economic activity',
+        'source': 'Federal Reserve'
+    },
+    'RSXFS': {
+        'name': 'Retail Sales (Advance Estimate)',
+        'frequency': 'monthly',
+        'impact': 'HIGH',
+        'release_schedule': 'Mid-month, 8:30 AM ET',
+        'description': 'Total sales at retail and food service stores',
+        'unit': 'millions of dollars',
+        'market_importance': 'Indicates consumer spending strength',
+        'source': 'Census Bureau'
+    },
+    
+    # ========== BUSINESS SENTIMENT ==========
+    'UMCSENT': {
+        'name': 'University of Michigan Consumer Sentiment Index',
+        'frequency': 'monthly',
+        'impact': 'MEDIUM',
+        'release_schedule': 'Mid-month and end-of-month',
+        'description': 'Measure of consumer confidence and expectations',
+        'unit': 'index',
+        'market_importance': 'Predicts future consumer spending',
+        'source': 'University of Michigan'
+    },
+    
+    # ========== INTEREST RATES & SPREADS ==========
+    'DFF': {
+        'name': 'Effective Federal Funds Rate',
+        'frequency': 'daily',
+        'impact': 'VERY HIGH',
+        'release_schedule': 'Daily',
+        'description': 'Actual interest rate banks charge each other',
+        'unit': 'percent',
+        'market_importance': 'Fed policy rate - controls all other rates',
+        'source': 'Federal Reserve'
+    },
+    'T10Y2Y': {
+        'name': '10-Year / 2-Year Treasury Spread',
+        'frequency': 'daily',
+        'impact': 'HIGH',
+        'release_schedule': 'Daily at 5 PM ET',
+        'description': 'Difference between 10Y and 2Y Treasury yields',
+        'unit': 'basis points',
+        'market_importance': 'Inverted curve predicts recessions',
+        'source': 'Federal Reserve'
+    },
+    'GS10': {
+        'name': '10-Year Treasury Yield',
+        'frequency': 'daily',
+        'impact': 'HIGH',
+        'release_schedule': 'Daily',
+        'description': 'Yield on 10-year US government bonds',
+        'unit': 'percent',
+        'market_importance': 'Benchmark rate for mortgages and corporate bonds',
+        'source': 'Federal Reserve'
+    },
+    
+    # ========== HOUSING ==========
+    'HOUST': {
+        'name': 'Housing Starts',
+        'frequency': 'monthly',
+        'impact': 'MEDIUM',
+        'release_schedule': '16th of month (unless weekend), 8:30 AM ET',
+        'description': 'Number of new residential construction projects',
+        'unit': 'thousands (annualized)',
+        'market_importance': 'Shows housing market strength',
+        'source': 'Census Bureau'
+    },
+    'MORTGAGE30US': {
+        'name': '30-Year Mortgage Rate',
+        'frequency': 'weekly',
+        'impact': 'MEDIUM',
+        'release_schedule': 'Every Thursday',
+        'description': 'Average fixed mortgage rate for 30-year loans',
+        'unit': 'percent',
+        'market_importance': 'Affects housing affordability and demand',
+        'source': 'Freddie Mac'
+    },
+}
+
+# ============================================================================
+# RELEASE SCHEDULE - When major indicators come out
+# ============================================================================
+
+RELEASE_SCHEDULE = {
+    'PAYEMS': {
+        'frequency': 'Monthly',
+        'day': 'First Friday of month',
+        'time': '08:30 ET',
+        'importance': '⭐⭐⭐⭐⭐ CRITICAL'
+    },
+    'UNRATE': {
+        'frequency': 'Monthly',
+        'day': 'First Friday of month',
+        'time': '08:30 ET',
+        'importance': '⭐⭐⭐⭐⭐ CRITICAL'
+    },
+    'CPIAUCSL': {
+        'frequency': 'Monthly',
+        'day': '~10th of month',
+        'time': '08:30 ET',
+        'importance': '⭐⭐⭐⭐⭐ CRITICAL'
+    },
+    'CPILFESL': {
+        'frequency': 'Monthly',
+        'day': '~10th of month',
+        'time': '08:30 ET',
+        'importance': '⭐⭐⭐⭐ VERY HIGH'
+    },
+    'PCEPI': {
+        'frequency': 'Monthly',
+        'day': '~End of month',
+        'time': '08:30 ET',
+        'importance': '⭐⭐⭐⭐⭐ CRITICAL'
+    },
+    'ICSA': {
+        'frequency': 'Weekly',
+        'day': 'Every Thursday',
+        'time': '08:30 ET',
+        'importance': '⭐⭐⭐ MEDIUM'
+    },
+    'INDPRO': {
+        'frequency': 'Monthly',
+        'day': '~15th of month',
+        'time': '09:15 ET',
+        'importance': '⭐⭐⭐ MEDIUM'
+    },
+    'RSXFS': {
+        'frequency': 'Monthly',
+        'day': '~10th of month',
+        'time': '08:30 ET',
+        'importance': '⭐⭐⭐⭐ VERY HIGH'
+    },
+}
+
+def print_indicator_reference():
+    """Print human-readable reference of all indicators"""
+    print("\n" + "="*80)
+    print("FRED INDICATORS REFERENCE")
+    print("="*80)
+    
+    for code, info in FRED_INDICATORS_REFERENCE.items():
+        print(f"\n{code}: {info['name']}")
+        print(f"  Frequency: {info['frequency']}")
+        print(f"  Impact: {info['impact']}")
+        print(f"  Release: {info['release_schedule']}")
+        print(f"  Description: {info['description']}")
+        print(f"  Market Impact: {info['market_importance']}")
+
+if __name__ == '__main__':
+    print_indicator_reference()
